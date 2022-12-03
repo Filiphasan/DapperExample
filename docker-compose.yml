@@ -1,0 +1,82 @@
+version: '3.4'
+
+services:
+  dapper-web:
+    image: ${DOCKER_REGISTRY-}dapper-web
+    container_name: dapper_web
+    build:
+      context: .
+      dockerfile: Dapper.Web/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      - sql-server
+      - redis
+      - elastic-image
+    links:
+      - sql-server
+      - redis
+      - elastic-image
+  
+  sql-server:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: sql_server
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${SQL_SERVER_PASSWORD}"
+  
+  redis:
+    image: 'redis:latest'
+    container_name: redis_db
+    restart: always
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+    ports:
+      - '${REDIS_PORT}:6379'
+    command: [ "redis-server" ]
+  
+  elastic-image:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.1
+    container_name: elk_elastic
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+      - xpack.security.enabled=true
+      - xpack.security.audit.enabled=true
+      - discovery.type=single-node
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - node.master=true
+      - node.data=true
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - http.cors.allow-headers=Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With
+      - http.cors.allow-credentials=true
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+  
+  kibana_image:
+    image: docker.elastic.co/kibana/kibana:7.16.1
+    container_name: elk_kibana
+    environment:
+      - "ELASTICSEARCH_URL=http://elastic_image:9200"
+      - "ELASTICSEARCH_HOSTS=http://elastic_image:9200"
+      - "ELASTICSEARCH_USERNAME=elastic"
+      - "ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}"
+      - server.name=kibana_image
+      - server.host="0"
+      - xpack.security.enabled=true
+      - xpack.monitoring.enabled=true
+      - xpack.ml.enabled=false
+      - xpack.graph.enabled=false
+      - xpack.reporting.enabled=false
+      - xpack.grokdebugger.enabled=false
+    depends_on:
+      - elastic-image
+    links:
+      - elastic-image
+    ports:
+      - "5601:5601"
