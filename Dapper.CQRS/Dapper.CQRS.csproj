@@ -6,4 +6,15 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\User\Command" />
+      <Folder Include="Features\User\Queries" />
+      <Folder Include="Features\User\Validator" />
+      <Folder Include="Models" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Dapper.Data\Dapper.Data.csproj" />
+    </ItemGroup>
+
 </Project>
