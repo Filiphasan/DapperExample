@@ -6,4 +6,16 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Remove="Data\Abstracts\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Data\Abstracts\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Data\Abstracts\**" />
+    </ItemGroup>
+
 </Project>

@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 #region MyCustom Service Collections
 
 builder.Services.SetOptionModels(configuration);
+builder.Services.SetServiceLifeCycles(configuration);
 
 #endregion
 

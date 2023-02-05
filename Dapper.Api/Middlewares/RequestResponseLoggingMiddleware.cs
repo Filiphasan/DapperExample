@@ -25,7 +25,6 @@ public class RequestResponseLoggingMiddleware
             return Task.CompletedTask;
         });
 
-        // Log incoming request
         LogRequest(context.Request, correlationId);
 
         // Store the original body stream
