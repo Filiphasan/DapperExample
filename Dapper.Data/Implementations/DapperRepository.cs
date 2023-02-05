@@ -35,7 +35,7 @@ public class DapperRepository<TEntity> : IDapperRepository<TEntity> where TEntit
         var pkColumnName = DbPropertyHelper.GetPrimaryKeyColumnName<TEntity>();
         var parameters = new { TableName = _tableName, Id = id, PkColumnName = pkColumnName };
         string sqlQuery = "SELECT * FROM @TableName WHERE @PkColumnName=@Id";
-        return await _connection.QueryFirstAsync(sqlQuery, parameters);
+        return await _connection.QueryFirstAsync<TEntity>(sqlQuery, parameters);
     }
 
     public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? expression = null)
