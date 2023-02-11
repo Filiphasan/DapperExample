@@ -7,14 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Features\User\Command" />
-      <Folder Include="Features\User\Queries" />
-      <Folder Include="Features\User\Validator" />
-      <Folder Include="Models" />
+      <Folder Include="Features\Users\Queries" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Dapper.Data\Dapper.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="11.2.1" />
+      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     </ItemGroup>
 
 </Project>

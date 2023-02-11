@@ -31,17 +31,16 @@ public class RequestResponseLoggingMiddleware
         var originalBodyStream = context.Response.Body;
 
         // Create a new memory stream to replace the original response stream
-        using (var responseBody = new MemoryStream())
-        {
-            // Replace the response stream
-            context.Response.Body = responseBody;
+        using var responseBody = new MemoryStream();
 
-            // Call the next middleware
-            await _next(context);
+        // Replace the response stream
+        context.Response.Body = responseBody;
 
-            // Log the response after it has been processed
-            await LogResponse(context.Response, originalBodyStream, correlationId);
-        }
+        // Call the next middleware
+        await _next(context);
+
+        // Log the response after it has been processed
+        await LogResponse(context.Response, originalBodyStream, correlationId);
     }
 
     private void LogRequest(HttpRequest request, string correlationId)
@@ -59,7 +58,7 @@ public class RequestResponseLoggingMiddleware
         var requestBody = reader.ReadToEnd();
         request.Body.Position = 0;
         stringBuilder.AppendLine("Request body: " + MaskSensitiveData(requestBody));
-        
+
         _logger.LogInformation(stringBuilder.ToString());
     }
 

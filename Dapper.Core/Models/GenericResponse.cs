@@ -2,10 +2,11 @@ namespace Dapper.Core.Models;
 
 public class GenericResponse<TResult> where TResult: class, new()
 {
-    public string Uuıd { get; set; } = Guid.NewGuid().ToString();
+    public string Uuid { get; set; } = Guid.NewGuid().ToString();
     public int StatusCode { get; set; }
     public TResult? Data { get; set; }
     public IEnumerable<string>? Errors { get; set; }
+    public IEnumerable<string>? ValidationErrors { get; set; }
 
     public GenericResponse()
     {
