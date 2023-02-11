@@ -1,22 +1,22 @@
 version: '3.4'
 
 services:
-  dapper-web:
-    image: ${DOCKER_REGISTRY-}dapper-web
-    container_name: dapper_web
-    build:
-      context: .
-      dockerfile: Dapper.Web/Dockerfile
-    ports:
-      - "5001:80"
-    depends_on:
-      - sql-server
-      - redis
-      - elastic-image
-    links:
-      - sql-server
-      - redis
-      - elastic-image
+#  dapper-web:
+#    image: ${DOCKER_REGISTRY-}dapper-web
+#    container_name: dapper_web
+#    build:
+#      context: .
+#      dockerfile: Dapper.Web/Dockerfile
+#    ports:
+#      - "5001:80"
+#    depends_on:
+#      - sql-server
+#      - redis
+#      - elastic-image
+#    links:
+#      - sql-server
+#      - redis
+#      - elastic-image
   
   sql-server:
     image: mcr.microsoft.com/azure-sql-edge
@@ -25,7 +25,7 @@ services:
       - "1433:1433"
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "${SQL_SERVER_PASSWORD}"
+      SA_PASSWORD: "${SQL_SERVER_PASSWORD}"
   
   redis:
     image: 'redis:latest'
