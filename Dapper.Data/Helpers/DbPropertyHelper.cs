@@ -22,6 +22,14 @@ public static class DbPropertyHelper
         return GetDatabaseColumnName<TEntity>(primaryKeyPropertyName);
     }
 
+    public static object GetPrimaryKeyColumnValue<TEntity>(TEntity entity) where TEntity: class, IDbEntity, new()
+    {
+        var primaryKeyPropertyName = GetPrimaryKeyPropertyName<TEntity>();
+        var value = entity.GetType().GetProperties().First(x => x.Name == primaryKeyPropertyName).GetValue(entity);
+        if (value is null) throw new NoPrimaryKeyValueException($"{nameof(TEntity)} doesn't have Primary Key Value.");
+        return value;
+    }
+
     public static string GetDatabaseColumnName<TEntity>(string propertyName) where TEntity: class, IDbEntity, new()
     {
         var type = typeof(TEntity);

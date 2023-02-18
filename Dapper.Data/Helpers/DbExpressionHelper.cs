@@ -20,21 +20,39 @@ public static class DbExpressionHelper
         where TEntity : class, IDbEntity, new()
     {
         var left = binaryExpression.Left as MemberExpression;
-        var right = binaryExpression.Right as ConstantExpression;
+        var right = binaryExpression.Right;
 
-        var dbColumnName = DbPropertyHelper.GetDatabaseColumnName<TEntity>(left.Member.Name);
-        var value = right?.Value;
+        if (left != null)
+        {
+            var dbColumnName = DbPropertyHelper.GetDatabaseColumnName<TEntity>(left.Member.Name);
+            var value = GetRightValueForExpressionSql(right);
+            var operatorString = GetOperatorString(binaryExpression.NodeType);
 
-        var operatorString = GetOperatorString(binaryExpression.NodeType);
+            return $"{dbColumnName} {operatorString} {value}";
+        }
 
-        return $"{dbColumnName} {operatorString} {value}";
+        return string.Empty;
+    }
+
+    private static string GetRightValueForExpressionSql(Expression expression)
+    {
+        var type = expression.Type.Name.ToLower();
+        var f = Expression.Lambda(expression).Compile();
+        var objectValue = f.DynamicInvoke();
+        var value = type switch
+        {
+            "string" => $"\'{objectValue}\'",
+            _ => ""
+        };
+
+        return value;
     }
 
     private static string GetOperatorString(ExpressionType expressionType)
         => expressionType switch
         {
             ExpressionType.Equal => "=",
-            ExpressionType.NotEqual => "",
+            ExpressionType.NotEqual => "<>",
             ExpressionType.GreaterThan => ">",
             ExpressionType.GreaterThanOrEqual => ">=",
             ExpressionType.LessThan => "<",

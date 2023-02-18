@@ -18,6 +18,7 @@ public static class ServiceExtension
     {
         serviceCollection.AddSingleton<IDbConnection>(new SqlConnection(configuration.GetConnectionString("SQLServer")));
         serviceCollection.AddTransient(typeof(IDapperRepository<>), typeof(DapperRepository<>));
+        serviceCollection.AddTransient<IUserRepository, UserRepository>();
         return serviceCollection;
     }
 }
