@@ -8,15 +8,9 @@ internal static class DbSqlBuilderHelper
         where TEntity : class, IDbEntity, new()
     {
         string resultStr;
-        var propertyNameList = typeof(TEntity).GetProperties().Select(x => x.Name);
-        var selectPartOfSqlStrList = new List<string>();
-        foreach (var propertyName in propertyNameList)
-        {
-            var columnName = DbPropertyHelper.GetDatabaseColumnName<TEntity>(propertyName);
-            selectPartOfSqlStrList.Add($"[{columnName}] AS [{propertyName}]");
-        }
+        var selectPartOfSqlStr = GetSelectPartSqlString<TEntity>();
 
-        resultStr = string.Format("SELECT TOP 1 {0} FROM {1}", string.Join(", ", selectPartOfSqlStrList), tableName);
+        resultStr = string.Format("SELECT TOP 1 {0} FROM {1}", selectPartOfSqlStr, tableName);
         if (!string.IsNullOrWhiteSpace(whereConditionStr))
         {
             resultStr = $"{resultStr} WHERE {whereConditionStr}";
@@ -40,5 +34,19 @@ internal static class DbSqlBuilderHelper
         var pkColumnName = DbPropertyHelper.GetPrimaryKeyColumnName<TEntity>();
         resultStr = string.Format("DELETE FROM [{0}] WHERE {1}={2}", tableName, pkColumnName, id);
         return resultStr;
+    }
+
+    private static string GetSelectPartSqlString<TEntity>()
+        where TEntity : class, IDbEntity, new()
+    {
+        var propertyNameList = typeof(TEntity).GetProperties().Select(x => x.Name).ToList();
+        var selectPartOfSqlStrList = new List<string>();
+        foreach (var propertyName in propertyNameList)
+        {
+            var columnName = DbPropertyHelper.GetDatabaseColumnName<TEntity>(propertyName);
+            selectPartOfSqlStrList.Add($"[{columnName}] AS [{propertyName}]");
+        }
+
+        return string.Join(", ", selectPartOfSqlStrList);
     }
 }
