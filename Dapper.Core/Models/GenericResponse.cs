@@ -3,6 +3,7 @@ namespace Dapper.Core.Models;
 public class GenericResponse<TResult> where TResult: class, new()
 {
     public string Uuid { get; set; } = Guid.NewGuid().ToString();
+    public bool IsSuccess { get; set; }
     public int StatusCode { get; set; }
     public TResult? Data { get; set; }
     public IEnumerable<string>? Errors { get; set; }
@@ -14,6 +15,7 @@ public class GenericResponse<TResult> where TResult: class, new()
 
     public GenericResponse(int statusCode, string errorMessage)
     {
+        IsSuccess = false;
         StatusCode = statusCode;
         Errors = new List<string>() { errorMessage };
         Data = null;
@@ -21,13 +23,15 @@ public class GenericResponse<TResult> where TResult: class, new()
 
     public GenericResponse(int statusCode, string[] errorMessages)
     {
+        IsSuccess = false;
         StatusCode = statusCode;
         Errors = errorMessages;
         Data = null;
     }
 
-    public GenericResponse(int statusCode, TResult result)
+    public GenericResponse(int statusCode, bool isSuccess, TResult result)
     {
+        IsSuccess = isSuccess;
         StatusCode = statusCode;
         Data = result;
         Errors = null;
@@ -50,11 +54,11 @@ public class GenericResponse<TResult> where TResult: class, new()
 
     public static GenericResponse<TResult> Success(TResult result)
     {
-        return new GenericResponse<TResult>(200, result);
+        return new GenericResponse<TResult>(200, true, result);
     }
 
     public static GenericResponse<TResult> Success(int statusCode ,TResult result)
     {
-        return new GenericResponse<TResult>(statusCode, result);
+        return new GenericResponse<TResult>(statusCode, true, result);
     }
 }
