@@ -7,7 +7,7 @@ namespace Dapper.Data.Entities;
 [Table("DP_USER")]
 public class User : IDbEntity
 {
-    [Key] [Column("ID")] public int Id { get; set; }
+    [Key] [Column("ID")] [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int Id { get; set; }
     [Column("PUBLIC_ID")] public string PublicId { get; set; } = null!;
     [Column("FIRST_NAME")] public string FirstName { get; set; } = null!;
     [Column("LAST_NAME")] public string LastName { get; set; } = null!;

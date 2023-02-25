@@ -45,12 +45,13 @@ public static class DbExpressionHelper
 
     private static string GetRightValueForExpressionSql(Expression expression)
     {
-        var type = expression.Type.Name.ToLower();
         var f = Expression.Lambda(expression).Compile();
         var objectValue = f.DynamicInvoke();
+        var type = objectValue.GetType().Name.ToLower();
         var value = type switch
         {
             "string" => $"\'{objectValue}\'",
+            "datetime" => $"'{Convert.ToDateTime(objectValue).ToString("yyyy-MM-dd HH:mm:ss")}'",
             _ => ""
         };
 

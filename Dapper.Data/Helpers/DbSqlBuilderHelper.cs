@@ -55,8 +55,10 @@ internal static class DbSqlBuilderHelper
         List<string> dbColumnNameList = new();
         List<string> dbColumnValueList = new();
         var properties = typeof(TEntity).GetProperties().ToList();
+        var identityPropertyName = DbPropertyHelper.GetIdentityPropertyName<TEntity>();
         foreach (var propertyInfo in properties.Select(x => x.Name))
         {
+            if (propertyInfo.Equals(identityPropertyName)) continue;
             string dbColumnName = DbPropertyHelper.GetDatabaseColumnName<TEntity>(propertyInfo);
             dbColumnNameList.Add(dbColumnName);
             dbColumnValueList.Add($"@{propertyInfo}");
