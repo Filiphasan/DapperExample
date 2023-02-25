@@ -19,8 +19,8 @@ public class AddUserCommandHandler : BaseHandler<AddUserCommandHandler>, IBaseRe
     {
         try
         {
-            var userExist = await _userRepository.GetFirstOrDefaultAsync(x => x.Username == request.UserName);
-            if (userExist != null)
+            var userExist = await _userRepository.AnyAsync(x => x.Username == request.UserName && x.FirstName == request.FirstName && x.LastName == request.LastName);
+            if (userExist)
             {
                 return GenericResponse<AddUserResponse>.Error(400, "Username already exist.");
             }
@@ -33,7 +33,7 @@ public class AddUserCommandHandler : BaseHandler<AddUserCommandHandler>, IBaseRe
                 LastName = request.LastName,
                 FullName = $"{request.FirstName} {request.LastName}",
                 Username = request.UserName,
-                Password = request.Password, //TODO: Hash or Encrypt Password
+                Password = request.Password, //Hash or Encrypt Password
                 CreateDate = DateTime.Now,
             };
             

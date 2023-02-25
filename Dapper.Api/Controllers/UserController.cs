@@ -1,4 +1,5 @@
 using Dapper.Api.Controllers.BaseControllers;
+using Dapper.Core.Models;
 using Dapper.CQRS.Models.Users;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,9 @@ public class UserController : CustomControllerBase
         _mediator = mediator;
     }
 
+    [ProducesResponseType(typeof(GenericResponse<AddUserResponse>), 200)]
+    [ProducesResponseType(typeof(GenericResponse<NoDataResponse>), 400)]
+    [ProducesResponseType(typeof(GenericResponse<NoDataResponse>), 500)]
     [HttpPost("Add")]
     public async Task<IActionResult> AddUser(AddUserCommand request)
     {

@@ -19,6 +19,15 @@ public static class DbExpressionHelper
     private static string GetBinaryExpressionSql<TEntity>(BinaryExpression binaryExpression)
         where TEntity : class, IDbEntity, new()
     {
+        if (binaryExpression.NodeType is ExpressionType.AndAlso or ExpressionType.OrElse)
+        {
+            var leftTemp = GetBinaryExpressionSql<TEntity>(binaryExpression.Left as BinaryExpression);
+            var rightTemp = GetBinaryExpressionSql<TEntity>(binaryExpression.Right as BinaryExpression);
+            var operatorString = GetOperatorString(binaryExpression.NodeType);
+
+            return $"({leftTemp} {operatorString} {rightTemp})";
+        }
+        
         var left = binaryExpression.Left as MemberExpression;
         var right = binaryExpression.Right;
 
@@ -57,6 +66,8 @@ public static class DbExpressionHelper
             ExpressionType.GreaterThanOrEqual => ">=",
             ExpressionType.LessThan => "<",
             ExpressionType.LessThanOrEqual => "<=",
-            _ => ""
+            ExpressionType.AndAlso => "AND",
+            ExpressionType.OrElse => "OR",
+            _ => throw new InvalidOperationException("Unsupported ExpressionType")
         };
 }

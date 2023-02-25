@@ -74,22 +74,29 @@ public class DapperRepository<TEntity> : IDapperRepository<TEntity> where TEntit
         return await Connection.QueryFirstOrDefaultAsync<TEntity>(sqlQuery);
     }
 
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression)
+    {
+        var expressionSqlStr = DbExpressionHelper.GetExpressionSql(expression);
+        string sqlQuery = DbSqlBuilderHelper.GetAnySqlString(_tableName, expressionSqlStr);
+        return await Connection.QueryFirstAsync<bool>(sqlQuery);
+    }
+
     public async Task<int> AddAsync(TEntity entity)
     {
-        var sqlQuery = DbEntityHelper.CreateInsertSqlQueryStringDapper<TEntity>(_tableName);
+        var sqlQuery = DbSqlBuilderHelper.CreateInsertSqlQueryStringDapper<TEntity>(_tableName);
         return await Connection.ExecuteAsync(sqlQuery, entity);
     }
 
     public async Task<bool> UpdateAsync(object id, ExpandoObject fields)
     {
-        var sqlQuery = DbEntityHelper.CreateUpdateSpecificColumnSqlQueryStringDapper<TEntity>(fields, id, _tableName);
+        var sqlQuery = DbSqlBuilderHelper.CreateUpdateSpecificColumnSqlQueryStringDapper<TEntity>(fields, id, _tableName);
         var updatedDataCount = await Connection.ExecuteAsync(sqlQuery, fields);
         return updatedDataCount > 0;
     }
 
     public async Task<bool> UpdateAsync(TEntity entity)
     {
-        string sqlQuery = DbEntityHelper.CreateUpdateAllColumnSqlQueryStringDapper(entity, _tableName);
+        string sqlQuery = DbSqlBuilderHelper.CreateUpdateAllColumnSqlQueryStringDapper(entity, _tableName);
         var updatedDataCount = await Connection.ExecuteAsync(sqlQuery, entity);
         return updatedDataCount > 0;
     }
