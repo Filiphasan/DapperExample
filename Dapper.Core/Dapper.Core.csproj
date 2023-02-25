@@ -18,4 +18,8 @@
       <None Remove="Data\Abstracts\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Enums" />
+    </ItemGroup>
+
 </Project>

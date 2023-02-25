@@ -1,4 +1,6 @@
+using System.Security.Authentication;
 using Dapper.Core.Models;
+using Dapper.Core.Services.interfaces;
 using Dapper.CQRS.Models.Users;
 using Dapper.Data.Entities;
 using Dapper.Data.Interfaces;
@@ -9,17 +11,19 @@ namespace Dapper.CQRS.Features.Users.Commands;
 public class AddUserCommandHandler : BaseHandler<AddUserCommandHandler>, IBaseRequestHandler<AddUserCommand, AddUserResponse>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IHashService _hashService;
     
-    public AddUserCommandHandler(ILoggerFactory logger, IUserRepository userRepository) : base(logger)
+    public AddUserCommandHandler(ILoggerFactory logger, IUserRepository userRepository, IHashService hashService) : base(logger)
     {
         _userRepository = userRepository;
+        _hashService = hashService;
     }
 
     public async Task<GenericResponse<AddUserResponse>> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var userExist = await _userRepository.AnyAsync(x => x.CreateDate < DateTime.Today);
+            var userExist = await _userRepository.AnyAsync(x => x.Username == request.UserName);
             if (userExist)
             {
                 return GenericResponse<AddUserResponse>.Error(400, "Username already exist.");
@@ -27,6 +31,7 @@ public class AddUserCommandHandler : BaseHandler<AddUserCommandHandler>, IBaseRe
             
             var response = new AddUserResponse();
 
+            var hashedPassword = await _hashService.GetHashedString(request.Password, HashAlgorithmType.Sha256);
             User newUser = new()
             {
                 FirstName = request.FirstName,
@@ -34,7 +39,7 @@ public class AddUserCommandHandler : BaseHandler<AddUserCommandHandler>, IBaseRe
                 PublicId = Guid.NewGuid().ToString(),
                 FullName = $"{request.FirstName} {request.LastName}",
                 Username = request.UserName,
-                Password = request.Password, //Hash or Encrypt Password
+                Password = hashedPassword,
                 CreateDate = DateTime.Now,
             };
             
