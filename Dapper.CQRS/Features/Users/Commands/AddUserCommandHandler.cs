@@ -54,9 +54,7 @@ public class AddUserCommandHandler : BaseHandler<AddUserCommandHandler>, IBaseRe
         }
         catch (Exception ex)
         {
-            var result = GenericResponse<AddUserResponse>.Error(500, "Somethings Went Wrong!");
-            _logger.LogError(ex, "Error RequestId: {RequestId}", result.Uuid);
-            return result;
+            return HandleExceptionResponse<AddUserResponse>(ex);
         }
     }
 }
