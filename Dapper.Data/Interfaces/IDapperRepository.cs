@@ -9,11 +9,11 @@ public interface IDapperRepository<TEntity> where TEntity: class, IDbEntity, new
     Task<IEnumerable<TEntity>> SqlQueryAsync(string sqlQueryString);
     Task<IEnumerable<TEntity>> GetAllAsync();
     Task<TEntity> GetByIdAsync(object id);
-    Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? expression = null);
-    Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>>? expression = null);
-    Task<TEntity> GetLastAsync(Expression<Func<TEntity, bool>>? expression = null);
-    Task<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>>? expression = null);
-    Task<TEntity?> GetLastOrDefaultAsync(Expression<Func<TEntity, bool>>? expression = null);
+    Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> expression = null);
+    Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> expression = null);
+    Task<TEntity> GetLastAsync(Expression<Func<TEntity, bool>> expression = null);
+    Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> expression = null);
+    Task<TEntity> GetLastOrDefaultAsync(Expression<Func<TEntity, bool>> expression = null);
     Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression);
     Task<int> AddAsync(TEntity entity);
     Task<bool> UpdateAsync(object id, ExpandoObject fields);

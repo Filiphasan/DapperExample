@@ -5,9 +5,9 @@ public class GenericResponse<TResult> where TResult: class, new()
     public string Uuid { get; set; } = Guid.NewGuid().ToString();
     public bool IsSuccess { get; set; }
     public int StatusCode { get; set; }
-    public TResult? Data { get; set; }
-    public IEnumerable<string>? Errors { get; set; }
-    public IEnumerable<string>? ValidationErrors { get; set; }
+    public TResult Data { get; set; }
+    public IEnumerable<string> Errors { get; set; }
+    public IEnumerable<string> ValidationErrors { get; set; }
 
     public GenericResponse()
     {
