@@ -89,15 +89,14 @@ internal static class DbSqlBuilderHelper
     {
         if (string.IsNullOrWhiteSpace(tableName)) tableName = DbEntityHelper.GetTableName<TEntity>();
         List<string> list = new();
-        var properties = fields.GetType().GetProperties().ToList();
-        foreach (var propertyInfo in properties.Select(x => x.Name))
+        foreach (var fieldKey in fields.Select(x => x.Key))
         {
-            string dbColumnName = DbPropertyHelper.GetDatabaseColumnName<TEntity>(propertyInfo);
-            list.Add($"{dbColumnName}=@{propertyInfo}");
+            string dbColumnName = DbPropertyHelper.GetDatabaseColumnName<TEntity>(fieldKey);
+            list.Add($"{dbColumnName}=@{fieldKey}");
         }
 
         var pkColumnName = DbPropertyHelper.GetPrimaryKeyColumnName<TEntity>();
-        return $"UPDATE {tableName} SET ({string.Join(", ", list)}) WHERE {pkColumnName}={id}";
+        return $"UPDATE {tableName} SET {string.Join(", ", list)} WHERE {pkColumnName}={id}";
     }
 
     private static string GetSelectPartSqlString<TEntity>()

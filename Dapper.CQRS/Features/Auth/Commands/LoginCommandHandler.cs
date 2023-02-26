@@ -1,3 +1,4 @@
+using System.Dynamic;
 using Dapper.Core.Models;
 using Dapper.Core.Models.Auth;
 using Dapper.Core.Services.interfaces;
@@ -43,6 +44,10 @@ public class LoginCommandHandler : BaseHandler<LoginCommandHandler>, IBaseReques
                 Username = user.Username,
             };
             var token = await _tokenService.CreateTokenAsync(tokenModel);
+
+            dynamic updateUser = new ExpandoObject();
+            updateUser.LastLoginDate = DateTime.Now;
+            await _userRepository.UpdateAsync(user.Id, updateUser);
 
             var response = new LoginResponse()
             {
