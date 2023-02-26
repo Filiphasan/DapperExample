@@ -13,8 +13,7 @@ public class HashService : IHashService
         using var alg = GetHashAlgorithm(algorithmType);
 
         string hex = "";
-        var stream = new MemoryStream(message);
-        var hashValue = alg.ComputeHash(stream);
+        var hashValue = alg.ComputeHash(message);
         hex = Convert.ToBase64String(hashValue);
 
         return Task.FromResult(hex);
@@ -26,7 +25,7 @@ public class HashService : IHashService
         return hashedPassword.Equals(hashedString);
     }
 
-    private HashAlgorithm GetHashAlgorithm(HashAlgorithmType type) =>
+    private static HashAlgorithm GetHashAlgorithm(HashAlgorithmType type) =>
         type switch
         {
             HashAlgorithmType.Md5 => MD5.Create(),
@@ -34,6 +33,6 @@ public class HashService : IHashService
             HashAlgorithmType.Sha256 => SHA256.Create(),
             HashAlgorithmType.Sha384 => SHA384.Create(),
             HashAlgorithmType.Sha512 => SHA512.Create(),
-            _ => throw new CryptographicUnexpectedOperationException("Unsupported HashAlgorithmType")
+            _ => throw new CryptographicException("Unsupported HashAlgorithmType")
         };
 }
