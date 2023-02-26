@@ -31,7 +31,7 @@ public class AddUserCommandHandler : BaseHandler<AddUserCommandHandler>, IBaseRe
             
             var response = new AddUserResponse();
 
-            var hashedPassword = await _hashService.GetHashedString(request.Password, HashAlgorithmType.Sha256);
+            var hashedPassword = await _hashService.GetHashedString(request.Password);
             User newUser = new()
             {
                 FirstName = request.FirstName,

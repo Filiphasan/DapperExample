@@ -7,7 +7,7 @@ namespace Dapper.Core.Services;
 
 public class HashService : IHashService
 {
-    public Task<string> GetHashedString(string password, HashAlgorithmType algorithmType = HashAlgorithmType.Sha512)
+    public Task<string> GetHashedString(string password, HashAlgorithmType algorithmType = HashAlgorithmType.Sha256)
     {
         var message = Encoding.UTF8.GetBytes(password);
         using var alg = GetHashAlgorithm(algorithmType);
