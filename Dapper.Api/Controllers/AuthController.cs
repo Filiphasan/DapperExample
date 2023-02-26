@@ -1,4 +1,5 @@
 using Dapper.Api.Controllers.BaseControllers;
+using Dapper.Core.Models;
 using Dapper.CQRS.Models.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,9 @@ public class AuthController : CustomControllerBase
         _mediator = mediator;
     }
 
+    [ProducesResponseType(typeof(GenericResponse<LoginResponse>) ,200)]
+    [ProducesResponseType(typeof(GenericResponse<NoDataResponse>) ,400)]
+    [ProducesResponseType(typeof(GenericResponse<NoDataResponse>) ,500)]
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginCommand request)
     {

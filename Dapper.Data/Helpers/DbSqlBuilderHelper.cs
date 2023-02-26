@@ -5,6 +5,30 @@ namespace Dapper.Data.Helpers;
 
 internal static class DbSqlBuilderHelper
 {
+    internal static string GetByIdSqlString<TEntity>(string tableName, object id)
+        where TEntity : class, IDbEntity, new()
+    {
+        string resultStr;
+        var selectPartOfSqlStr = GetSelectPartSqlString<TEntity>();
+        var pkColumnName = DbPropertyHelper.GetPrimaryKeyColumnName<TEntity>();
+        resultStr = string.Format("SELECT TOP 1 {0} FROM [{1}] WHERE {2} = {3}", selectPartOfSqlStr, tableName, pkColumnName, id);
+        
+        return resultStr;
+    }
+    
+    internal static string GetSqlString<TEntity>(string tableName, string whereConditionStr)
+        where TEntity : class, IDbEntity, new()
+    {
+        string resultStr;
+        var selectPartOfSqlStr = GetSelectPartSqlString<TEntity>();
+        resultStr = string.Format("SELECT {0} FROM [{1}]", selectPartOfSqlStr, tableName);
+        if (!string.IsNullOrWhiteSpace(whereConditionStr))
+        {
+            resultStr = $"{resultStr} WHERE {whereConditionStr}";
+        }
+        
+        return resultStr;
+    }
     internal static string GetFirstSqlString<TEntity>(string tableName, string whereConditionStr)
         where TEntity : class, IDbEntity, new()
     {
@@ -84,7 +108,7 @@ internal static class DbSqlBuilderHelper
         return $"UPDATE {tableName} SET ({string.Join(", ", list)}) WHERE {pkColumnName}={pkColumnValue}";
     }
     
-    public static string CreateUpdateSpecificColumnSqlQueryStringDapper<TEntity>(ExpandoObject fields, object id, string tableName)
+    internal static string CreateUpdateSpecificColumnSqlQueryStringDapper<TEntity>(ExpandoObject fields, object id, string tableName)
         where TEntity : class, IDbEntity, new()
     {
         if (string.IsNullOrWhiteSpace(tableName)) tableName = DbEntityHelper.GetTableName<TEntity>();
