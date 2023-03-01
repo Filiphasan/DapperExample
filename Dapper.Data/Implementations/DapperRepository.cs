@@ -71,6 +71,47 @@ public class DapperRepository<TEntity> : IDapperRepository<TEntity> where TEntit
         return await Connection.QueryFirstOrDefaultAsync<TEntity>(sqlQuery);
     }
 
+    public async Task<TResult> GetByIdAsync<TResult>(object id) where TResult : class, new()
+    {
+        string sqlQuery = DbSqlBuilderHelper.GetByIdSqlString<TEntity, TResult>(_tableName, id);
+        return await Connection.QueryFirstAsync<TResult>(sqlQuery);
+    }
+
+    public async Task<IEnumerable<TResult>> GetAsync<TResult>(Expression<Func<TEntity, bool>> expression = null) where TResult : class, new()
+    {
+        var expressionSqlStr = DbExpressionHelper.GetExpressionSql(expression);
+        string sqlQuery = DbSqlBuilderHelper.GetSqlString<TEntity, TResult>(_tableName, expressionSqlStr);
+        return await Connection.QueryAsync<TResult>(sqlQuery);
+    }
+
+    public async Task<TResult> GetFirstAsync<TResult>(Expression<Func<TEntity, bool>> expression = null)  where TResult : class, new()
+    {
+        var expressionSqlStr = DbExpressionHelper.GetExpressionSql(expression);
+        string sqlQuery = DbSqlBuilderHelper.GetFirstSqlString<TEntity, TResult>(_tableName, expressionSqlStr);
+        return await Connection.QueryFirstAsync<TResult>(sqlQuery);
+    }
+
+    public async Task<TResult> GetLastAsync<TResult>(Expression<Func<TEntity, bool>> expression = null)  where TResult : class, new()
+    {
+        var expressionSqlStr = DbExpressionHelper.GetExpressionSql(expression);
+        string sqlQuery = DbSqlBuilderHelper.GetLastSqlString<TEntity, TResult>(_tableName, expressionSqlStr);
+        return await Connection.QueryFirstAsync<TResult>(sqlQuery);
+    }
+
+    public async Task<TResult> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, bool>> expression = null)  where TResult : class, new()
+    {
+        var expressionSqlStr = DbExpressionHelper.GetExpressionSql(expression);
+        string sqlQuery = DbSqlBuilderHelper.GetFirstSqlString<TEntity, TResult>(_tableName, expressionSqlStr);
+        return await Connection.QueryFirstOrDefaultAsync<TResult>(sqlQuery);
+    }
+
+    public async Task<TResult> GetLastOrDefaultAsync<TResult>(Expression<Func<TEntity, bool>> expression = null)  where TResult : class, new()
+    {
+        var expressionSqlStr = DbExpressionHelper.GetExpressionSql(expression);
+        string sqlQuery = DbSqlBuilderHelper.GetLastSqlString<TEntity, TResult>(_tableName, expressionSqlStr);
+        return await Connection.QueryFirstOrDefaultAsync<TResult>(sqlQuery);
+    }
+
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression)
     {
         var expressionSqlStr = DbExpressionHelper.GetExpressionSql(expression);
