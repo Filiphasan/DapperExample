@@ -1,5 +1,6 @@
 using System.Reflection;
 using Dapper.Api.Extensions;
+using Dapper.Api.Middlewares;
 using Dapper.CQRS.Models.Users;
 using MediatR;
 
@@ -29,7 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseMiddleware<RequestResponseLoggingMiddleware>();
+app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 
